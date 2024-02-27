@@ -1,6 +1,5 @@
 package com.viridi.controller;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,11 +27,11 @@ public class AuthController {
 		return ResponseEntity.ok(registered);
 	}
 	
-	//Method for login 
+	//Method for login
 	@PostMapping("/login")
 	public ResponseEntity<AuthenticationResponse> loginUser(
 			@RequestBody User request ){
-		AuthenticationResponse logedIn = authService.login(request);
-		return ResponseEntity.ok(logedIn);
+		
+		return ResponseEntity.ok(authService.authenticate(request));
 	}
 }
