@@ -32,8 +32,6 @@ public class SecurityConfig {
 	@Autowired
 	private CustomAccessDeniedHandler accessDeniedHandler;
 	
-	@Autowired
-	private CustomLogoutHandler logoutHandler;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -49,11 +47,6 @@ public class SecurityConfig {
                                         (request, response, accessDeniedException)->response.setStatus(403)
                                 )
                                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .logout(l->l
-                        .logoutUrl("/logout")
-                        .addLogoutHandler(logoutHandler)
-                        .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()
-                        ))
                 .build();
 	}
 

@@ -13,7 +13,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 @Entity
@@ -37,10 +36,7 @@ public class User implements UserDetails{
 	private Role role;
 
 	private boolean isEnabled;
-	
-	@OneToMany(mappedBy = "user")
-    private List<Token> tokens;
-	
+		
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

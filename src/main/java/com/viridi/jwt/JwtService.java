@@ -5,12 +5,10 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.viridi.entity.User;
-import com.viridi.repo.TokenRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,8 +18,6 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-	@Autowired
-	private TokenRepository tokenRepository;
 	
 	
 	public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60;
@@ -34,13 +30,13 @@ public class JwtService {
 	public boolean isValid(String token, UserDetails user) {
         String username = extractUsername(token);
 
-        
-        boolean validToken = tokenRepository
-                .findByToken(token)
-                .map(t -> !t.isLoggedOut())
-                .orElse(false);
+//        
+//        boolean validToken = tokenRepository
+//                .findByToken(token)
+//                .map(t -> !t.isLoggedOut())
+//                .orElse(false);
 		
-        return (username.equals(user.getUsername())) && !isTokenExpired(token) && validToken; //&& validToken;
+        return (username.equals(user.getUsername())) && !isTokenExpired(token); //&& validToken;
     }
 	
 	private boolean isTokenExpired(String token) {

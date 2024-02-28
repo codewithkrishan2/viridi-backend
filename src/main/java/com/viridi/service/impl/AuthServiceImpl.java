@@ -1,7 +1,5 @@
 package com.viridi.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,10 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.viridi.dto.AuthenticationResponse;
-import com.viridi.entity.Token;
+import com.viridi.entity.Role;
 import com.viridi.entity.User;
 import com.viridi.jwt.JwtService;
-import com.viridi.repo.TokenRepository;
 import com.viridi.repo.UserRepo;
 import com.viridi.service.AuthService;
 
@@ -31,8 +28,6 @@ public class AuthServiceImpl implements AuthService {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
-	@Autowired
-	private TokenRepository tokenRepository;
 
 	@Override
 	public AuthenticationResponse registerNewUser(User request) {
@@ -47,16 +42,14 @@ public class AuthServiceImpl implements AuthService {
 		user.setLastName(request.getLastName());
 		user.setEmail(request.getEmail());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
-		user.setEnabled(true);
+		user.setEnabled(false);
 		// user.setRole("ROLE_USER");
-		user.setRole(request.getRole());
+		user.setRole(Role.USER);
 
 		user = userRepo.save(user);
 
 		String token = jwtService.generateToken(user);
 
-		//Save the genrated token
-		saveUserToken(token, user);
 
 		return new AuthenticationResponse(token, "User registration was successful");
 	}
@@ -72,37 +65,47 @@ public class AuthServiceImpl implements AuthService {
 		User user = userRepo.findByEmail(request.getUsername()).get();
 		String jwt = jwtService.generateToken(user);
 
-		revokeAllTokenByUser(user);
-		saveUserToken(jwt, user);
 
 		return new AuthenticationResponse(jwt, "User login was successful");
 	}
 
+
 	@Override
-	public AuthenticationResponse loginUserservice(User request) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public AuthenticationResponse initRoleAndUser() {
 
-	private void revokeAllTokenByUser(User user) {
-		List<Token> validTokens = tokenRepository.findAllTokensByUser(user.getId());
-		if (validTokens.isEmpty()) {
-			return;
+		// check if user already exist. if exist than authenticate the user
+		if (userRepo.findByEmail("admin@viridi.com").isPresent()) {
+			return new AuthenticationResponse(null, "User already exist");
 		}
+		else {
+			User user = new User();
+			user.setFirstName("Admin");
+			user.setLastName("admin");
+			user.setEmail("admin@viridi.com");
+			user.setPassword(passwordEncoder.encode("admin"));
+			user.setEnabled(true);
+			user.setRole(Role.ADMIN);
 
-		validTokens.forEach(t -> {
-			t.setLoggedOut(true);
-		});
+			user = userRepo.save(user);
+			String token = jwtService.generateToken(user);
 
-		tokenRepository.saveAll(validTokens);
+			return new AuthenticationResponse(token, "User registration was successful");
+		
+		}
+		
+
 	}
 
-	private void saveUserToken(String jwt, User user) {
-		Token token = new Token();
-		token.setToken(jwt);
-		token.setLoggedOut(false);
-		token.setUser(user);
-		tokenRepository.save(token);
+	@Override
+	public AuthenticationResponse enableUserReqest(Long id) {
+		User user = userRepo.findById(id).get();
+		user.setEnabled(true);
+		userRepo.save(user);
+
+		String token = jwtService.generateToken(user);
+
+
+		return new AuthenticationResponse(token, "User enabled was successful");
 	}
 
 }
