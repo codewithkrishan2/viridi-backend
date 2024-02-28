@@ -49,6 +49,8 @@ public class AuthServiceImpl implements AuthService {
 		user = userRepo.save(user);
 
 		String token = jwtService.generateToken(user);
+		
+		//AuthenticationResponse response = new AuthenticationResponse();
 
 
 		return new AuthenticationResponse(token, "User registration was successful");
