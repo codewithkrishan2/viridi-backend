@@ -1,14 +1,15 @@
 package com.viridi.service;
 
+import com.viridi.dto.ApiResponse;
 import com.viridi.dto.AuthenticationResponse;
-import com.viridi.entity.User;
+import com.viridi.dto.UserDto;
 
 public interface AuthService {
 
-	public AuthenticationResponse registerNewUser(User request);
-	public AuthenticationResponse authenticate(User request);
+	public AuthenticationResponse registerNewUser(UserDto request);
+	public AuthenticationResponse authenticate(UserDto request);
 	
-	public AuthenticationResponse initRoleAndUser();
+	public ApiResponse initRoleAndUser();
 	
 	public AuthenticationResponse enableUserReqest(Long id);
 }

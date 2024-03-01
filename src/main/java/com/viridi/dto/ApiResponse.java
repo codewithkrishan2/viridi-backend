@@ -1,16 +1,16 @@
 package com.viridi.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
+@Setter
+@Getter
 @NoArgsConstructor
-public class AuthenticationResponse {
-	private String token;
-	
-	private UserDto user;
+@AllArgsConstructor
+public class ApiResponse {
 	
 	private String message;
+	private boolean success;
 }
