@@ -2,7 +2,6 @@ package com.viridi.dto;
 
 import java.util.List;
 
-import jakarta.persistence.ElementCollection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,17 +15,17 @@ public class ProductDto {
 
 	private Long id;
 	
-	private String productName;
+	private String name;
 	
-	private String productDescription;
+	private String description;
 	
-	private Double productPrice;
+	private Double price;
 	
-	private Double productDiscountedPrice;
+	private Double discountedPrice;
 	
-    private List<String> productImages;
+    private List<String> images;
 	
-	private String productCategory;
+	private CategoryDto category;
 
 	
 }
