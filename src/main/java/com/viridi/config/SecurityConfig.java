@@ -38,6 +38,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(req ->req
 				.requestMatchers("/api/v1/auth/**").permitAll()
 				.requestMatchers("/api/v1/user/**").permitAll()
+				.requestMatchers("/api/v1/product/**","/api/v1/category/**").permitAll()
 				.requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN").anyRequest().authenticated())
 				.userDetailsService(userDetailsServiceImpl)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

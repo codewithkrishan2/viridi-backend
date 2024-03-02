@@ -30,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public ProductDto addOneProduct(ProductDto productDto, Long categoryId) {
+		
 		Category category = categoryRepo.findById(categoryId).orElseThrow( ()-> new ResourceNotFoundException("Category ", " category id", categoryId));
 		
 		Product product = modelMapper.map(productDto, Product.class);
@@ -74,8 +75,6 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductDto getOneProductById(Long id) {
 		Product product = productRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Product ", "Product Id ", id));
-
-		
 		return modelMapper.map(product, ProductDto.class);
 	}
 

@@ -21,7 +21,7 @@ import com.viridi.service.CategoryService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/categories")
+@RequestMapping("/api/v1/category")
 public class CategoryController {
 
 	@Autowired
@@ -30,8 +30,8 @@ public class CategoryController {
 	
 	//Create Category
     @PostMapping("/create")
-	public ResponseEntity<CategoryDto> createCategory(@Valid
-			@RequestBody CategoryDto categoryDto){
+	public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto){
+    	
 		CategoryDto createdCategory = this.categoryService.createCategory(
 				categoryDto);
 		return new ResponseEntity<CategoryDto>(
@@ -58,7 +58,7 @@ public class CategoryController {
     }
     
     //Get Category
-    @GetMapping("/one/{categoryId}")
+    @GetMapping("/{categoryId}")
     public ResponseEntity<?> getCategoryById(@PathVariable Long categoryId){
     	CategoryDto categoryById = this.categoryService.getCategoryById(categoryId);
     	return new ResponseEntity<CategoryDto>(categoryById, HttpStatus.OK);
