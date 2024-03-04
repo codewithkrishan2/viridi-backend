@@ -34,7 +34,7 @@ public class AuthController {
 	//register New User to the Site
 	@PostMapping("/register")
 	public ResponseEntity<AuthenticationResponse> registerNew(
-			@RequestBody UserDto request ){
+			 @RequestBody UserDto request ){
 		
 		AuthenticationResponse registered = authService.registerNewUser(request);
 		return ResponseEntity.ok(registered);

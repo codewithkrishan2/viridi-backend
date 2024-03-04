@@ -1,4 +1,4 @@
-package com.viridi.entity;
+package com.viridi.enums;
 
 public enum Role {
 

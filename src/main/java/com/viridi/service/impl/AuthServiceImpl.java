@@ -1,5 +1,7 @@
 package com.viridi.service.impl;
 
+import java.time.LocalDateTime;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,9 +12,12 @@ import org.springframework.stereotype.Service;
 import com.viridi.dto.ApiResponse;
 import com.viridi.dto.AuthenticationResponse;
 import com.viridi.dto.UserDto;
-import com.viridi.entity.Role;
+import com.viridi.entity.Orders;
 import com.viridi.entity.User;
+import com.viridi.enums.OrderStatus;
+import com.viridi.enums.Role;
 import com.viridi.jwt.JwtService;
+import com.viridi.repo.OrdersRepo;
 import com.viridi.repo.UserRepo;
 import com.viridi.service.AuthService;
 
@@ -34,6 +39,9 @@ public class AuthServiceImpl implements AuthService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
+	@Autowired
+	private OrdersRepo ordersRepo;
+	
 	@Override
 	public AuthenticationResponse registerNewUser(UserDto request1) {
 
@@ -49,11 +57,24 @@ public class AuthServiceImpl implements AuthService {
 		user.setLastName(request.getLastName());
 		user.setEmail(request.getEmail());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
+		user.setCreatedAt(LocalDateTime.now());
 		user.setEnabled(false);
 		// user.setRole("ROLE_USER");
 		user.setRole(Role.USER);
 
+		
 		User savedUser = userRepo.save(user);
+		
+		Orders order = new Orders();
+		order.setAddress(null);
+		order.setAmount(0.0);
+		order.setDiscountedAmount(0.0);
+		order.setTotalAmount(0.0);
+		order.setDescription(null);
+		order.setUser(savedUser);
+		order.setStatus(OrderStatus.PENDING);
+		ordersRepo.save(order);
+		
 		String token = jwtService.generateToken(user);
 		
 		UserDto userDto = modelMapper.map(savedUser, UserDto.class);
@@ -89,8 +110,7 @@ public class AuthServiceImpl implements AuthService {
 		response.setToken(jwt);
 		response.setUser(userDto);
 		response.setMessage("Succsessfully logged in");
-
-
+		
 		return response;
 
 	}
@@ -104,20 +124,21 @@ public class AuthServiceImpl implements AuthService {
 			return new ApiResponse("User already exist", true);
 		}
 		else {
+			//If user is not present then create a new user
 			User user = new User();
 			user.setFirstName("Admin");
 			user.setLastName("admin");
 			user.setEmail("admin@viridi.com");
 			user.setPassword(passwordEncoder.encode("admin"));
+			user.setCreatedAt(LocalDateTime.now());
 			user.setEnabled(true);
-			user.setRole(Role.ADMIN);
+			user.setRole(Role.ADMIN);//
 
 			user = userRepo.save(user);
 			
 			//String token = jwtService.generateToken(user);
 			
 			ApiResponse response = new ApiResponse("User registration was successful", true);
-
 
 			return response;
 		
