@@ -24,6 +24,15 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.NOT_FOUND);
 	}
 	
+	
+	@ExceptionHandler(CustomValidationException.class)
+	public ResponseEntity<CustomValidationException> customValidationExceptionHandler( CustomValidationException ex) {
+		String message = ex.getMessage();
+		CustomValidationException customValidationException = new CustomValidationException(message);
+		return new ResponseEntity<CustomValidationException>(customValidationException, HttpStatus.BAD_REQUEST);
+	}
+	
+	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, String>> methodArgumentNotValidException( MethodArgumentNotValidException ex){
 		

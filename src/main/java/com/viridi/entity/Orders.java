@@ -18,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
@@ -31,6 +30,8 @@ public class Orders {
 	private Long id;
 	
 	private String description;
+	
+	private String userName;
 	
 	private LocalDateTime orderedDate;
 	
@@ -51,8 +52,16 @@ public class Orders {
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 	
+	@OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	@JoinColumn(name = "coupon_id", referencedColumnName = "id")
+	private Coupon coupon;
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "orders")
 	private List<CartItems> cartItems;
+	
+	public void setUserName(String userName) {
+		this.userName = user.getFirstName() + " " + user.getLastName();
+	}
 	
 	
 }

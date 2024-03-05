@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viridi.dto.AddProductsInCartDto;
 import com.viridi.dto.OrdersDto;
+import com.viridi.exception.CustomValidationException;
 import com.viridi.service.CartItemsService;
 
 @RestController
@@ -48,6 +49,19 @@ public class CartController {
 		}
 		
 		return response; 
+	}
+	
+	@PostMapping("/applyCoupon/{userId}/{code}")
+	public ResponseEntity<?> applyCoupon( @PathVariable Long userId ,@PathVariable String code) {
+		
+		try {
+			OrdersDto applyCoupon = cartItemsService.applyCoupon(userId, code);
+			return ResponseEntity.ok(applyCoupon);
+		} catch (CustomValidationException ex) {
+			ex.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+		}
+				
 	}
 	
 }

@@ -1,12 +1,12 @@
 package com.viridi.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,12 +15,15 @@ import com.viridi.dto.AddProductsInCartDto;
 import com.viridi.dto.CartItemsDto;
 import com.viridi.dto.OrdersDto;
 import com.viridi.entity.CartItems;
+import com.viridi.entity.Coupon;
 import com.viridi.entity.Orders;
 import com.viridi.entity.Product;
 import com.viridi.entity.User;
 import com.viridi.enums.OrderStatus;
+import com.viridi.exception.CustomValidationException;
 import com.viridi.exception.ResourceNotFoundException;
 import com.viridi.repo.CartItemsRepo;
+import com.viridi.repo.CouponRepo;
 import com.viridi.repo.OrdersRepo;
 import com.viridi.repo.ProductRepo;
 import com.viridi.repo.UserRepo;
@@ -45,6 +48,9 @@ public class CartItemsServiceImpl implements CartItemsService {
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private CouponRepo couponRepo;
 
 
 	@Override
@@ -97,7 +103,7 @@ public class CartItemsServiceImpl implements CartItemsService {
 				
 		List<CartItems> items = activeOrder.getCartItems();
 		
-		List<CartItemsDto> cartItems = items.stream().map((item)-> this.modelMapper.map(item, CartItemsDto.class)).collect(Collectors.toList());
+		List<CartItemsDto> cartItemsDtos= items.stream().map((item)-> this.modelMapper.map(item, CartItemsDto.class)).collect(Collectors.toList());
 		
 		
 		
@@ -108,9 +114,52 @@ public class CartItemsServiceImpl implements CartItemsService {
 		orderDto.setAmount(activeOrder.getAmount());
 		orderDto.setDiscountedAmount(activeOrder.getDiscountedAmount());
 		orderDto.setTotalAmount(activeOrder.getTotalAmount());
-		orderDto.setCartItems(cartItems);
+		orderDto.setCartItems(cartItemsDtos);
+		if (activeOrder.getCoupon() != null) {
+			orderDto.setCouponName(activeOrder.getCoupon().getCode());
+			
+		}
+		
 		
 		
 		return orderDto;
 	}
+
+
+	@Override
+	public OrdersDto applyCoupon(Long userId, String code) {
+		
+		//User user = userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found with Id ", " userId", userId));
+		
+		Orders activeOrder = ordersRepo.findByUserIdAndStatus(userId, OrderStatus.PENDING);
+
+		Coupon coupon = couponRepo.findByCode(code).orElseThrow(()-> new CustomValidationException("Coupon Code Not Found"));
+		
+		if (couponIsExpired(coupon)) {
+			throw new CustomValidationException("Coupon Code Has Expired");
+			
+		}
+		
+		double discountAmount = ((coupon.getDiscount() / 100.0 ) * activeOrder.getTotalAmount());
+		
+		double netAmount = activeOrder.getTotalAmount() - discountAmount;
+		
+		activeOrder.setAmount(netAmount);
+		activeOrder.setDiscountedAmount(discountAmount);
+		
+		activeOrder.setCoupon(coupon);
+		
+		ordersRepo.save(activeOrder);
+		
+		return modelMapper.map(activeOrder, OrdersDto.class);
+	}
+
+
+	private boolean couponIsExpired(Coupon coupon) {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime expirationDate = coupon.getExpirationDate();
+		return expirationDate != null && now.isAfter(expirationDate);
+	}
+	
+	
 }

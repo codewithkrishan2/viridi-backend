@@ -42,7 +42,9 @@ private Long id;
 	
 	private UUID trackingId;
 	
-	private String userEmail;
+	private String userName;
 	
 	private List<CartItemsDto> cartItems;
+	
+	private String couponName;
 }
