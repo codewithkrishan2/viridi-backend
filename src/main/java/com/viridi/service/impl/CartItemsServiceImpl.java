@@ -3,6 +3,7 @@ package com.viridi.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.viridi.dto.AddProductsInCartDto;
 import com.viridi.dto.CartItemsDto;
 import com.viridi.dto.OrdersDto;
+import com.viridi.dto.PlaceOrderDto;
 import com.viridi.entity.CartItems;
 import com.viridi.entity.Coupon;
 import com.viridi.entity.Orders;
@@ -160,6 +162,117 @@ public class CartItemsServiceImpl implements CartItemsService {
 		LocalDateTime expirationDate = coupon.getExpirationDate();
 		return expirationDate != null && now.isAfter(expirationDate);
 	}
+
+
+	@Override
+	public OrdersDto increaseProductsQuantity(AddProductsInCartDto addProductsInCartDto) {
+		
+		Orders activeOrder = ordersRepo.findByUserIdAndStatus(addProductsInCartDto.getUserId(), OrderStatus.PENDING);
+		
+		Optional<Product> optionalProduct = productRepo.findById(addProductsInCartDto.getProductId());
+		
+		Optional<CartItems> optionalCartItems = cartItemsRepo.findByProductIdAndOrdersIdAndUserId(addProductsInCartDto.getProductId(), activeOrder.getId(), addProductsInCartDto.getUserId());
+		
+		if( optionalProduct.isPresent()  && optionalCartItems.isPresent()) {
+			CartItems cartItems = optionalCartItems.get();
+			Product product = optionalProduct.get();
+			
+			activeOrder.setAmount(activeOrder.getAmount() + product.getPrice());
+			activeOrder.setTotalAmount(activeOrder.getTotalAmount() + product.getPrice());
+			activeOrder.setDiscountedAmount(activeOrder.getDiscountedAmount() + product.getPrice());
+			
+			cartItems.setQuantity(cartItems.getQuantity() + 1);
+			
+			if (activeOrder.getCoupon() != null) {
+				double discountAmount = ((activeOrder.getCoupon().getDiscount() / 100.0 ) * activeOrder.getTotalAmount());
+				double netAmount = activeOrder.getTotalAmount() - discountAmount;
+				
+				activeOrder.setAmount(netAmount);
+				activeOrder.setDiscountedAmount(discountAmount);
+				
+			}
+			
+			cartItemsRepo.save(cartItems);
+			ordersRepo.save(activeOrder);
+			
+			return modelMapper.map(activeOrder, OrdersDto.class);
+		}
+		
+		return null;
+	}
+
+
+	@Override
+	public OrdersDto decreaseProductsQuantity(AddProductsInCartDto addProductsInCartDto) {
+Orders activeOrder = ordersRepo.findByUserIdAndStatus(addProductsInCartDto.getUserId(), OrderStatus.PENDING);
+		
+		Optional<Product> optionalProduct = productRepo.findById(addProductsInCartDto.getProductId());
+		
+		Optional<CartItems> optionalCartItems = cartItemsRepo.findByProductIdAndOrdersIdAndUserId(addProductsInCartDto.getProductId(), activeOrder.getId(), addProductsInCartDto.getUserId());
+		
+		if( optionalProduct.isPresent()  && optionalCartItems.isPresent()) {
+			CartItems cartItems = optionalCartItems.get();
+			Product product = optionalProduct.get();
+			
+			activeOrder.setAmount(activeOrder.getAmount() - product.getPrice());
+			activeOrder.setTotalAmount(activeOrder.getTotalAmount() - product.getPrice());
+			activeOrder.setDiscountedAmount(activeOrder.getDiscountedAmount() - product.getPrice());
+			
+			cartItems.setQuantity(cartItems.getQuantity() - 1);
+			
+			if (activeOrder.getCoupon() != null) {
+				double discountAmount = ((activeOrder.getCoupon().getDiscount() / 100.0 ) * activeOrder.getTotalAmount());
+				double netAmount = activeOrder.getTotalAmount() - discountAmount;
+				
+				activeOrder.setAmount(netAmount);
+				activeOrder.setDiscountedAmount(discountAmount);
+				
+			}
+			
+			cartItemsRepo.save(cartItems);
+			ordersRepo.save(activeOrder);
+			
+			return modelMapper.map(activeOrder, OrdersDto.class);
+		}
+		
+		return null;
+	}
+
+
+	@Override
+	public OrdersDto placeOrder(PlaceOrderDto placeOrderDto) {
+		
+		Orders activeOrder = ordersRepo.findByUserIdAndStatus(placeOrderDto.getUserId(), OrderStatus.PENDING);
+		
+		Optional<User> optionalUser = userRepo.findById(placeOrderDto.getUserId());
+		
+		if(optionalUser.isPresent()) {
+			activeOrder.setDescription(placeOrderDto.getOrderDescription());
+			activeOrder.setAddress(placeOrderDto.getAddress());
+			activeOrder.setOrderedDate(LocalDateTime.now());
+			activeOrder.setStatus(OrderStatus.PLACED);
+			activeOrder.setTrackingId(UUID.randomUUID());
+			
+			ordersRepo.save(activeOrder);
+			
+			Orders order = new Orders();
+			order.setAddress(null);
+			order.setAmount(0.0);
+			order.setDiscountedAmount(0.0);
+			order.setTotalAmount(0.0);
+			order.setDescription(null);
+			order.setUser(optionalUser.get());
+			order.setStatus(OrderStatus.PENDING);
+			ordersRepo.save(order);
+			
+			return modelMapper.map(activeOrder, OrdersDto.class);
+		}
+		
+		return null;
+	}
+	
+	
+	
 	
 	
 }

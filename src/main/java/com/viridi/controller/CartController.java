@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viridi.dto.AddProductsInCartDto;
 import com.viridi.dto.OrdersDto;
+import com.viridi.dto.PlaceOrderDto;
 import com.viridi.exception.CustomValidationException;
 import com.viridi.service.CartItemsService;
 
@@ -62,6 +63,21 @@ public class CartController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
 		}
 				
+	}
+	
+	@PostMapping("/increaseQuantity")
+	public ResponseEntity<?> increaseProductsQuantities(@RequestBody AddProductsInCartDto addProductsInCartDto) {
+		return new ResponseEntity<OrdersDto>(cartItemsService.increaseProductsQuantity(addProductsInCartDto),HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/decreaseQuantity")
+	public ResponseEntity<?> decreaseProductsQuantities(@RequestBody AddProductsInCartDto addProductsInCartDto) {
+		return new ResponseEntity<OrdersDto>(cartItemsService.decreaseProductsQuantity(addProductsInCartDto),HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/placeOrder")
+	public ResponseEntity<?> placingOrder(@RequestBody PlaceOrderDto placeOrderDto) {
+		return new ResponseEntity<OrdersDto>(cartItemsService.placeOrder(placeOrderDto),HttpStatus.CREATED);
 	}
 	
 }
