@@ -29,12 +29,11 @@ public class User implements UserDetails{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank(message = "First name is required")
+	
 	private String firstName;
 	
 	private String lastName;
 	
-	@Column(unique = true)
 	private String email;
 	
 	private String password;

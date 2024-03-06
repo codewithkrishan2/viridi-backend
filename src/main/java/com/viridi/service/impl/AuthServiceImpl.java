@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,9 @@ import com.viridi.entity.Orders;
 import com.viridi.entity.User;
 import com.viridi.enums.OrderStatus;
 import com.viridi.enums.Role;
-import com.viridi.jwt.JwtService;
 import com.viridi.repo.OrdersRepo;
 import com.viridi.repo.UserRepo;
+import com.viridi.security.JwtTokenHelper;
 import com.viridi.service.AuthService;
 
 @Service
@@ -30,11 +31,21 @@ public class AuthServiceImpl implements AuthService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	
 	@Autowired
-	private JwtService jwtService;
+	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private JwtTokenHelper jwtTokenHelper;
+	
+//	@Autowired
+//	private JwtService jwtService;
+
+//	@Autowired
+//	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -75,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
 		order.setStatus(OrderStatus.PENDING);
 		ordersRepo.save(order);
 		
-		String token = jwtService.generateToken(user);
+		String token = jwtTokenHelper.generateToken(user);
 		
 		UserDto userDto = modelMapper.map(savedUser, UserDto.class);
 
@@ -102,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
 		System.out.println("Received from crontroller to service: " + request.getPassword());
 
 		User user = userRepo.findByEmail(request.getUsername()).get();
-		String jwt = jwtService.generateToken(user);
+		String jwt = jwtTokenHelper.generateToken(user);
 
 		UserDto userDto = modelMapper.map(user, UserDto.class);
 		
@@ -153,7 +164,7 @@ public class AuthServiceImpl implements AuthService {
 		
 		user.setEnabled(true);
 		userRepo.save(user);
-		String token = jwtService.generateToken(user);
+		String token = jwtTokenHelper.generateToken(user);
 		
 		UserDto userDto = this.modelMapper.map(user, UserDto.class);
 

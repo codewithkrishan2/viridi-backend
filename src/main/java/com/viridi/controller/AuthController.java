@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viridi.dto.AuthenticationResponse;
 import com.viridi.dto.UserDto;
-import com.viridi.entity.User;
 import com.viridi.service.AuthService;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -33,8 +33,7 @@ public class AuthController {
 	
 	//register New User to the Site
 	@PostMapping("/register")
-	public ResponseEntity<AuthenticationResponse> registerNew(
-			 @RequestBody UserDto request ){
+	public ResponseEntity<AuthenticationResponse> registerNew(@Valid @RequestBody UserDto request ){
 		
 		AuthenticationResponse registered = authService.registerNewUser(request);
 		return ResponseEntity.ok(registered);
