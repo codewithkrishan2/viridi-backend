@@ -35,6 +35,7 @@ public class UserDto {
 	private String email;
 	
 	@NotBlank(message = "Password is required")
+	@Size(min = 8, message = "Password should be min 8 characters")
 	private String password;
 	
 	private LocalDateTime createdAt;

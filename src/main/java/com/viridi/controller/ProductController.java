@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.viridi.dto.ProductDto;
 import com.viridi.service.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/product")
 public class ProductController {
@@ -27,7 +29,7 @@ public class ProductController {
 	//add product:  localhost:8080/api/v1/product/1/add
 	
 	@PostMapping("/category/{categoryId}/add")
-	public ResponseEntity<?> addOneProduct(@PathVariable Long categoryId ,@RequestBody ProductDto productDto){
+	public ResponseEntity<?> addOneProduct(@PathVariable Long categoryId ,@Valid @RequestBody ProductDto productDto){
 		
 		ResponseEntity<?> response = null;
 		
@@ -83,7 +85,7 @@ public class ProductController {
 	
 	//update product
 	@PutMapping("/{id}")
-	public ResponseEntity<?> pdateTheProduct(@RequestBody ProductDto productDto, @PathVariable Long id){
+	public ResponseEntity<?> pdateTheProduct(@Valid @RequestBody ProductDto productDto, @PathVariable Long id){
 		
 		ResponseEntity<?> response = null;
 		

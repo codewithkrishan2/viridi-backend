@@ -20,6 +20,8 @@ import com.viridi.exception.CustomValidationException;
 import com.viridi.exception.ResourceNotFoundException;
 import com.viridi.service.CouponService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/coupon")
 public class CouponController {
@@ -29,7 +31,7 @@ public class CouponController {
 	
 	//Method to create coupon
 	@PostMapping("/create")
-	public ResponseEntity<?> createCoupon(@RequestBody CouponDto couponDto) {
+	public ResponseEntity<?> createCoupon( @Valid @RequestBody CouponDto couponDto) {
 		try {
 			CouponDto createdCoupon = couponService.createCoupon(couponDto);
 			return ResponseEntity.ok(createdCoupon);
@@ -81,7 +83,7 @@ public class CouponController {
 	
 	//Update Coupon
 	@PutMapping("/{couponId}")
-	public ResponseEntity<?> updateCoupon(@RequestBody CouponDto couponDto, @PathVariable Long couponId) {
+	public ResponseEntity<?> updateCoupon( @Valid @RequestBody CouponDto couponDto, @PathVariable Long couponId) {
 		
 		try {
 			CouponDto updated = couponService.updateCoupon(couponDto, couponId);
