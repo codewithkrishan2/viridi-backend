@@ -20,9 +20,7 @@ public class CouponDto {
 	@NotBlank(message = "Coupon code is required")
 	private String code;
 	
-	@NotBlank(message = "Coupon discount is required")
 	private Double discount;
 	
-	@NotBlank(message = "Coupon expiring date is required")
 	private LocalDateTime expirationDate;
 }
