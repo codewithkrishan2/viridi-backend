@@ -13,6 +13,8 @@ public class PlaceOrderDto {
 	
 	private String address;
 	
+	private Long contactNumber;
+	
 	private String orderDescription;
 	
 }

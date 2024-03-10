@@ -33,6 +33,8 @@ public class Orders {
 	
 	private String userName;
 	
+	private Long contactNumber;
+	
 	private LocalDateTime orderedDate;
 	
 	private Double amount; //total amount after applying & discount

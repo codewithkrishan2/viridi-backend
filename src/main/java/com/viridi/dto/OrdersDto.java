@@ -35,6 +35,8 @@ public class OrdersDto {
 	
 	private String userName;
 	
+	private Long contactNumber;
+	
 	private List<CartItemsDto> cartItems;
 	
 	private String couponName;

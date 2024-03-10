@@ -36,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
 		Product product = modelMapper.map(productDto, Product.class);
 		product.setName(productDto.getName());
 		product.setDescription(productDto.getDescription());
+		product.setDetails(productDto.getDetails());
 		product.setPrice(productDto.getPrice());
 		product.setDiscountedPrice(productDto.getDiscountedPrice());
 		product.setImages(productDto.getImages());
@@ -56,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
 		
 		product.setName(productDto.getName());
 		product.setDescription(productDto.getDescription());
+		product.setDetails(productDto.getDetails());
 		product.setPrice(productDto.getPrice());
 		product.setDiscountedPrice(productDto.getDiscountedPrice());
 		product.setImages(productDto.getImages());

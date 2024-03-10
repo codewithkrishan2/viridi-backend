@@ -46,6 +46,4 @@ public class OrdersController {
 		return new ResponseEntity<List<OrdersDto>>(ordersService.getPlacedOrdersByUserId(userId),HttpStatus.OK);
 	}
 	
-	
-	
 }

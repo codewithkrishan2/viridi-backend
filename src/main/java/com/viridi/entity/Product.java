@@ -30,6 +30,9 @@ public class Product {
 	@Column(length = 1000000)
 	private String description;
 	
+	@Column(length = 1000000)
+	private String details;
+	
 	private Double price;
 	
 	private Double discountedPrice;

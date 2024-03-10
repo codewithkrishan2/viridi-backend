@@ -204,7 +204,7 @@ public class CartItemsServiceImpl implements CartItemsService {
 
 	@Override
 	public OrdersDto decreaseProductsQuantity(AddProductsInCartDto addProductsInCartDto) {
-Orders activeOrder = ordersRepo.findByUserIdAndStatus(addProductsInCartDto.getUserId(), OrderStatus.PENDING);
+		Orders activeOrder = ordersRepo.findByUserIdAndStatus(addProductsInCartDto.getUserId(), OrderStatus.PENDING);
 		
 		Optional<Product> optionalProduct = productRepo.findById(addProductsInCartDto.getProductId());
 		
@@ -249,6 +249,7 @@ Orders activeOrder = ordersRepo.findByUserIdAndStatus(addProductsInCartDto.getUs
 		if(optionalUser.isPresent()) {
 			activeOrder.setDescription(placeOrderDto.getOrderDescription());
 			activeOrder.setAddress(placeOrderDto.getAddress());
+			activeOrder.setContactNumber(placeOrderDto.getContactNumber());
 			activeOrder.setOrderedDate(LocalDateTime.now());
 			activeOrder.setStatus(OrderStatus.PLACED);
 			activeOrder.setTrackingId(UUID.randomUUID());

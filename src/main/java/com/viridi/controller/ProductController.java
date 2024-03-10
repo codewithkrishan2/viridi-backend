@@ -103,7 +103,7 @@ public class ProductController {
 			productService.deleteOneProduct(id);
 			response = new ResponseEntity<String>("Product deleted successfully", HttpStatus.OK);
 		} catch (Exception e) {
-			response = new ResponseEntity<String>("Unable to get product", HttpStatus.BAD_REQUEST);
+			response = new ResponseEntity<String>("Unable to delete product", HttpStatus.BAD_REQUEST);
 			e.printStackTrace();
 		}
 

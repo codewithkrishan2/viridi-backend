@@ -22,6 +22,8 @@ public class ProductDto {
 	@NotBlank(message = "Product discription is required")
 	private String description;
 	
+	private String details;
+	
 	private Double price;
 	
 	private Double discountedPrice;
