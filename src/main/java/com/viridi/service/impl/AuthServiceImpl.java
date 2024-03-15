@@ -17,6 +17,7 @@ import com.viridi.entity.Orders;
 import com.viridi.entity.User;
 import com.viridi.enums.OrderStatus;
 import com.viridi.enums.Role;
+import com.viridi.exception.ResourceNotFoundException;
 import com.viridi.repo.OrdersRepo;
 import com.viridi.repo.UserRepo;
 import com.viridi.security.JwtTokenHelper;
@@ -112,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
 		System.out.println("Received from crontroller to service: " + request.getEmail());
 		System.out.println("Received from crontroller to service: " + request.getPassword());
 
-		User user = userRepo.findByEmail(request.getUsername()).get();
+		User user = userRepo.findByEmail(request.getUsername()).orElseThrow(() -> new ResourceNotFoundException("User ", "Email", 0));
 		String jwt = jwtTokenHelper.generateToken(user);
 
 		UserDto userDto = modelMapper.map(user, UserDto.class);

@@ -12,7 +12,5 @@ public class AddProductsInCartDto {
 	private Long userId;
 	
 	private Long productId;
-	
-	
-	
+		
 }

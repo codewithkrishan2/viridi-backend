@@ -1,6 +1,7 @@
 package com.viridi.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -250,7 +251,7 @@ public class CartItemsServiceImpl implements CartItemsService {
 			activeOrder.setDescription(placeOrderDto.getOrderDescription());
 			activeOrder.setAddress(placeOrderDto.getAddress());
 			activeOrder.setContactNumber(placeOrderDto.getContactNumber());
-			activeOrder.setOrderedDate(LocalDateTime.now());
+			activeOrder.setOrderedDate(new Date());
 			activeOrder.setStatus(OrderStatus.PLACED);
 			activeOrder.setTrackingId(UUID.randomUUID());
 			

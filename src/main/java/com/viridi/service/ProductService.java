@@ -2,6 +2,7 @@ package com.viridi.service;
 
 import java.util.List;
 
+import com.viridi.dto.ProductDetailDto;
 import com.viridi.dto.ProductDto;
 
 public interface ProductService {
@@ -16,5 +17,5 @@ public interface ProductService {
 	
 	List<ProductDto> getAllProduct();
 	
-	
+	ProductDetailDto getOneProductDetailById(Long id);
 }

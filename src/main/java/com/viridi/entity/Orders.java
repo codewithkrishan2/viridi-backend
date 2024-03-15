@@ -1,6 +1,6 @@
 package com.viridi.entity;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +35,7 @@ public class Orders {
 	
 	private Long contactNumber;
 	
-	private LocalDateTime orderedDate;
+	private Date orderedDate;
 	
 	private Double amount; //total amount after applying & discount
 	

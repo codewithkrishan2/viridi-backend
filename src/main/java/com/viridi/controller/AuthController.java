@@ -1,7 +1,9 @@
 package com.viridi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viridi.dto.AuthenticationResponse;
 import com.viridi.dto.UserDto;
+import com.viridi.exception.ApiException;
 import com.viridi.service.AuthService;
 
 import jakarta.annotation.PostConstruct;
@@ -22,35 +25,35 @@ public class AuthController {
 
 	@Autowired
 	private AuthService authService;
-		
-	//Constructor to create a default admin role
+
+	// Constructor to create a default admin role
 	@PostConstruct
 	public void initRoleAndUser() {
 		authService.initRoleAndUser();
 	}
-	
-	
-	
-	//register New User to the Site
+
+	// register New User to the Site
 	@PostMapping("/register")
-	public ResponseEntity<AuthenticationResponse> registerNew(@Valid @RequestBody UserDto request ){
-		
+	public ResponseEntity<AuthenticationResponse> registerNew(@Valid @RequestBody UserDto request) {
+
 		AuthenticationResponse registered = authService.registerNewUser(request);
 		return ResponseEntity.ok(registered);
 	}
-	
-	//Method for login
+
+	// Method for login
 	@PostMapping("/login")
-	public ResponseEntity<AuthenticationResponse> loginUser(
-			@RequestBody UserDto request ){
-		
-		return ResponseEntity.ok(authService.authenticate(request));
+	public ResponseEntity<?> loginUser(@RequestBody UserDto request) {
+		try {
+			return ResponseEntity.ok(authService.authenticate(request));
+		} catch (Exception e) {
+			return new ResponseEntity<String>("Bad Credentials", HttpStatus.UNAUTHORIZED);
+		}
 	}
-	
-	//Enable user
+
+	// Enable user
 	@PutMapping("/enable/{id}")
-	public ResponseEntity<AuthenticationResponse> enableUser( @PathVariable Long id ){
-		
+	public ResponseEntity<AuthenticationResponse> enableUser(@PathVariable Long id) {
+
 		return ResponseEntity.ok(authService.enableUserReqest(id));
 	}
 }

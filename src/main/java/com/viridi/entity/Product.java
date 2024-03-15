@@ -37,6 +37,8 @@ public class Product {
 	
 	private Double discountedPrice;
 	
+	private int quantity;
+	
 	@ElementCollection
     private List<String> images;
 	
