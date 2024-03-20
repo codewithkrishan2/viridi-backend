@@ -1,5 +1,6 @@
 package com.viridi.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -50,7 +52,7 @@ public class Orders {
 	
 	private UUID trackingId;
 	
-	@OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 	
@@ -59,7 +61,7 @@ public class Orders {
 	private Coupon coupon;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "orders")
-	private List<CartItems> cartItems;
+	private List<CartItems> cartItems = new ArrayList<>();
 	
 	public void setUserName(String userName) {
 		this.userName = user.getFirstName() + " " + user.getLastName();

@@ -58,9 +58,16 @@ public class CartItemsServiceImpl implements CartItemsService {
 
 	@Override
 	public ResponseEntity<?> addProductsInCart(AddProductsInCartDto addProductsInCartDto) {
+		
+		System.out.println(addProductsInCartDto.getUserId()+"user id in cart");
+		
+		
 		Orders activeOrder = ordersRepo.findByUserIdAndStatus(addProductsInCartDto.getUserId(), OrderStatus.PENDING);
 		
-		System.out.println(addProductsInCartDto.getUserId());
+		if (activeOrder == null) {
+	        // Create a new pending order for the user if no active order exists
+	        activeOrder = createPendingOrder(addProductsInCartDto.getUserId());
+	    }
 		
 		Optional<CartItems> optionalCartItems = cartItemsRepo.findByProductIdAndOrdersIdAndUserId(addProductsInCartDto.getProductId(), activeOrder.getId(), addProductsInCartDto.getUserId());
 		
@@ -79,7 +86,7 @@ public class CartItemsServiceImpl implements CartItemsService {
 				cartItems.setOrders(activeOrder);
 				cartItems.setUser(optionalUser.get());
 				
-				CartItems updatedCart = cartItemsRepo.save(cartItems);
+				cartItemsRepo.save(cartItems);
 				
 				activeOrder.setAmount(activeOrder.getAmount() + cartItems.getPrice());
 				activeOrder.setTotalAmount(activeOrder.getTotalAmount() + cartItems.getPrice());
@@ -88,7 +95,9 @@ public class CartItemsServiceImpl implements CartItemsService {
 				
 				ordersRepo.save(activeOrder);
 				
-				return ResponseEntity.status(HttpStatus.CREATED).body(cartItems);
+				CartItemsDto cartItemsDto = modelMapper.map(cartItems, CartItemsDto.class);
+				
+				return ResponseEntity.status(HttpStatus.CREATED).body(cartItemsDto);
 				
 			}else {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product or User not found");
@@ -97,7 +106,26 @@ public class CartItemsServiceImpl implements CartItemsService {
 		}
 	}
 	
+	private Orders createPendingOrder(Long userId) {
+	    Optional<User> optionalUser = userRepo.findById(userId);
+	    if (optionalUser.isPresent()) {
+	        User user = optionalUser.get();
+	        Orders order = new Orders();
+	        order.setAddress(null);
+	        order.setAmount(0.0);
+	        order.setDiscountedAmount(0.0);
+	        order.setTotalAmount(0.0);
+	        order.setDescription(null);
+	        order.setUser(user);
+	        order.setStatus(OrderStatus.PENDING);
+	        return ordersRepo.save(order);
+	    }else {
+			throw new ResourceNotFoundException("User not found with Id ", " userId", userId);
+		}
+	   
+	}
 	
+	@Override
 	public OrdersDto getCartByUserId(Long userId) {
 		
 		User user = userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found with Id ", " userId", userId));
@@ -243,6 +271,38 @@ public class CartItemsServiceImpl implements CartItemsService {
 	@Override
 	public OrdersDto placeOrder(PlaceOrderDto placeOrderDto) {
 		
+		Optional<User> optionalUser = userRepo.findById(placeOrderDto.getUserId());
+
+	    if (optionalUser.isPresent()) {
+	        Orders activeOrder = ordersRepo.findByUserIdAndStatus(placeOrderDto.getUserId(), OrderStatus.PENDING);
+	        if (activeOrder != null) {
+	            // Update the existing pending order with new details
+	            activeOrder.setDescription(placeOrderDto.getOrderDescription());
+	            activeOrder.setAddress(placeOrderDto.getAddress());
+	            activeOrder.setContactNumber(placeOrderDto.getContactNumber());
+	            activeOrder.setUserName(optionalUser.get().getFirstName());
+	            activeOrder.setOrderedDate(new Date());
+	            activeOrder.setStatus(OrderStatus.PLACED);
+	            activeOrder.setTrackingId(UUID.randomUUID());
+
+	            ordersRepo.save(activeOrder);
+	        } else {
+	            // No pending order found, this case shouldn't occur if users are adding products to their cart before placing an order
+	            // You may want to handle this scenario based on your application logic
+	            // For example, you could throw an exception or log an error
+	            // For now, let's just return null
+	            return null;
+	        }
+
+	        // Return the updated order
+	        return modelMapper.map(activeOrder, OrdersDto.class);
+	    }
+
+	    return null;
+		
+		
+		/*
+		
 		Orders activeOrder = ordersRepo.findByUserIdAndStatus(placeOrderDto.getUserId(), OrderStatus.PENDING);
 		
 		Optional<User> optionalUser = userRepo.findById(placeOrderDto.getUserId());
@@ -271,8 +331,8 @@ public class CartItemsServiceImpl implements CartItemsService {
 		}
 		
 		return null;
+		 */
 	}
-	
 	
 	
 	

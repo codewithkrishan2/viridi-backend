@@ -3,7 +3,6 @@ package com.viridi.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viridi.dto.AuthenticationResponse;
 import com.viridi.dto.UserDto;
-import com.viridi.exception.ApiException;
 import com.viridi.service.AuthService;
 
 import jakarta.annotation.PostConstruct;
