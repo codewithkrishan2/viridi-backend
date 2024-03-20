@@ -51,10 +51,21 @@ public class CategoryController {
     //Delete Category
     @DeleteMapping("/delete/{categoryId}")
     public ResponseEntity<ApiResponse> deleteCategoryById(@PathVariable Long categoryId){
-    	this.categoryService.deleteCategory(categoryId);
-    	return new ResponseEntity<ApiResponse> ( 
-    			 new ApiResponse("Successfully deleted", true),
-    			 HttpStatus.OK);    	
+    	try {
+    		this.categoryService.deleteCategory(categoryId);
+        	return new ResponseEntity<ApiResponse> ( 
+        			 new ApiResponse("Successfully deleted", true),
+        			 HttpStatus.OK);  
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<ApiResponse> ( 
+       			 new ApiResponse(e.getMessage(), false),
+       			 HttpStatus.BAD_REQUEST); 
+			// TODO: handle exception
+		}
+    	
+    	  	
     }
     
     //Get Category

@@ -40,7 +40,7 @@ public class SecurityConfig {
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	
-	private static final String[] PUBLIC_URLS = {"/api/v1/auth/**","/api/v1/category/**", "/api/v1/product/**","/api/v1/cart/**","/api/v1/orders/**", "/v3/api-docs", "/v2/api-docs",
+	private static final String[] PUBLIC_URLS = {"/api/v1/auth/**","/api/v1/category/**", "/api/v1/coupon/**","/api/v1/product/**","/api/v1/cart/**","/api/v1/orders/**", "/v3/api-docs", "/v2/api-docs",
             "/swagger-resources/**", "/swagger-ui/**", "/webjars/**"
 
     };
