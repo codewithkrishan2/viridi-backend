@@ -37,6 +37,7 @@ public class CouponServiceImpl implements CouponService {
 		}
 		
 		Coupon coupon = modelMapper.map(couponDto, Coupon.class);
+		
 		Coupon savedCoupon = couponRepo.save(coupon);
 		
 		return modelMapper.map(savedCoupon, CouponDto.class);

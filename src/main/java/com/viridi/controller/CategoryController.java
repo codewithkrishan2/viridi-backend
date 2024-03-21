@@ -30,12 +30,22 @@ public class CategoryController {
 	
 	//Create Category
     @PostMapping("/create")
-	public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto){
+	public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryDto categoryDto){
     	
-		CategoryDto createdCategory = this.categoryService.createCategory(
-				categoryDto);
-		return new ResponseEntity<CategoryDto>(
-				createdCategory, HttpStatus.CREATED);
+		ResponseEntity<?> response  = null;
+		
+		try {
+			CategoryDto createdCategory = this.categoryService.createCategory( categoryDto);
+			response = new ResponseEntity<CategoryDto>( createdCategory, HttpStatus.CREATED);
+			return response;
+		} catch (Exception e) {
+			
+			response =  new ResponseEntity<ApiResponse>( 
+	       			 new ApiResponse(e.getMessage(), false),
+	       			 HttpStatus.BAD_REQUEST);  
+			return response;
+		}
+		
 	}
     
     //Update Category
