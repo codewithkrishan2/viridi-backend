@@ -5,12 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-	private String token;
+@AllArgsConstructor
+public class AddProductsInCartDto {
+
+	private Long userId;
 	
-	private UserDto user;
+	private Long productId;
 	
-	private String message;
+	
+	
 }
