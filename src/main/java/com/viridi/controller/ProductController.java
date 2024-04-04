@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.viridi.dto.ProductDetailDto;
 import com.viridi.dto.ProductDto;
 import com.viridi.service.ProductService;
 
@@ -52,8 +53,34 @@ public class ProductController {
 
 		ResponseEntity<?> response = null;
 
-		ProductDto productById = productService.getOneProductById(id);
-		response = new ResponseEntity<ProductDto>(productById, HttpStatus.OK);
+		try {
+			ProductDto productById = productService.getOneProductById(id);
+			response = new ResponseEntity<ProductDto>(productById, HttpStatus.OK);
+
+		} catch (Exception e) {
+			response = new ResponseEntity<String>("Unable to get product with id "+id, HttpStatus.NOT_FOUND);
+			e.printStackTrace();
+		}
+
+		return response;
+	}
+	
+	
+
+	// get detailed product with reviews by id
+	@GetMapping("/detail/{id}")
+	public ResponseEntity<?> getOneProductDetailedDto(@PathVariable Long id) {
+
+		ResponseEntity<?> response = null;
+
+		try {
+			ProductDetailDto oneProductDetailById = productService.getOneProductDetailById(id);
+			response = new ResponseEntity<ProductDetailDto>(oneProductDetailById, HttpStatus.OK);
+
+		} catch (Exception e) {
+			response = new ResponseEntity<String>("Unable to get product with id "+id, HttpStatus.NOT_FOUND);
+			e.printStackTrace();
+		}
 
 		return response;
 	}
@@ -78,7 +105,7 @@ public class ProductController {
 
 	// update product
 	@PutMapping("/{id}")
-	public ResponseEntity<?> pdateTheProduct(@Valid @RequestBody ProductDto productDto, @PathVariable Long id) {
+	public ResponseEntity<?> updateTheProduct(@Valid @RequestBody ProductDto productDto, @PathVariable Long id) {
 
 		ResponseEntity<?> response = null;
 

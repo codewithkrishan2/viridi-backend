@@ -2,6 +2,8 @@ package com.viridi.service.impl;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -64,6 +66,19 @@ public class OrdersServiceImpl implements OrdersService {
 				user.getId(), List.of(OrderStatus.PLACED, OrderStatus.SHIPPED, OrderStatus.DELIVERED))
 				.stream().map(order -> modelMapper.map(order, OrdersDto.class))
 				.collect(Collectors.toList());
+	}
+
+
+	@Override
+	public OrdersDto searchOrdersByTrackingId(UUID trackingId) {
+		
+		Optional<Orders> optionalOrder = ordersRepo.findByTrackingId(trackingId);
+		
+		if (optionalOrder.isPresent()) {
+			return modelMapper.map(optionalOrder.get(), OrdersDto.class);
+		}
+		
+		return null;
 	}
 
 	 

@@ -32,5 +32,6 @@ public class ProductDto {
 	
 	private CategoryDto category;
 
+	private int quantity;
 	
 }

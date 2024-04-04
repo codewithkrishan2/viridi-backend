@@ -1,6 +1,6 @@
 package com.viridi.dto;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +19,7 @@ public class OrdersDto {
 	
 	private String description;
 	
-	private LocalDateTime orderedDate;
+	private Date orderedDate;
 	
 	private Double amount; //total amount after applying & discount
 	

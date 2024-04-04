@@ -5,7 +5,6 @@ import java.util.List;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,34 +17,27 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Product {
-	
+public class Review {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private long id;
 	
-	@Column(length = 2000)
-	private String name;
-	
-	@Column(length = 1000000)
-	private String description;
-	
-	@Column(length = 1000000)
-	private String details;
-	
-	private Double price;
-	
-	private Double discountedPrice;
-	
-	private int quantity;
+	private Long rating;
 	
 	@ElementCollection
-    private List<String> images;
+	private List<String> images;
+	
+	private String description;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "category_id", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private Category category;
+	private User user;
 	
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "product_id", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private Product product;
 	
 }

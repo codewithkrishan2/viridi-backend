@@ -1,6 +1,7 @@
 package com.viridi.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,19 @@ public class OrdersController {
 	@GetMapping("/myorders/{userId}")
 	public ResponseEntity<List<OrdersDto>> getMethodName(@PathVariable Long userId) {
 		return new ResponseEntity<List<OrdersDto>>(ordersService.getPlacedOrdersByUserId(userId),HttpStatus.OK);
+	}
+	
+	//User can access this if they have tracking id.
+	@GetMapping("/track/{trackingId}") 
+	public ResponseEntity<?> getOrdersByTrackingId(@PathVariable UUID trackingId) {
+		
+		OrdersDto byTrackingId = ordersService.searchOrdersByTrackingId(trackingId);
+		
+		if (byTrackingId != null) {
+			return new ResponseEntity<OrdersDto>(byTrackingId,HttpStatus.OK);
+		}else {
+			return new ResponseEntity<ApiResponse>(new ApiResponse("Unable to find with id provided"+trackingId, false), HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 }
